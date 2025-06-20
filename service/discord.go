@@ -10,9 +10,15 @@ import (
 )
 
 var NganhNgheDB = []model.NganhNgheKinhDoanh{
-	{TenNganh: "May trang phục (trừ trang phục từ da lông thú)\n(Chi tiết: May mặc; Không tẩy, nhuộm, hồ, in trên các sản phẩm vải, sợi dệt, may, đan)", MaNganh: 1410},
-	{TenNganh: "Giặt là, làm sạch các sản phẩm dệt và lông thú\n(Chi tiết: Giặt ủi)", MaNganh: 9620},
-	{TenNganh: "Bán buôn cá và hải sản", MaNganh: 4632},
+	{TenNganh: "May trang phục (trừ trang phục từ da lông thú)\n(Chi tiết: May mặc; Không tẩy, nhuộm, hồ, in trên các sản phẩm vải, sợi dệt, may, đan)\n", MaNganh: 1410},
+	{TenNganh: "Giặt là, làm sạch các sản phẩm dệt và lông thú\n(Chi tiết: Giặt ủi)\n", MaNganh: 9620},
+	{TenNganh: "Bán buôn thực phẩm \n(Chi tiết: Bán buôn thủy sản)\n", MaNganh: 4632},
+	{TenNganh: "Sản xuất giường, tủ, bàn, ghế\n(Chi tiết: Gia công lắp ráp bàn, ghế gỗ)\n", MaNganh: 3100},
+	{TenNganh: "Sản xuất mì ống, mì sợi và sản phẩm tương tự\n(Chi tiết: Sản xuất mì tươi)\n", MaNganh: 1074},
+	{TenNganh: "Gia công cơ khí; xử lý và tráng phủ kim loại\n(Chi tiết: Gia công tiện, phay, bào; Không rèn, đúc, dập, cắt, gò, hàn, sơn, xi mạ điện, cán kéo kim loại)\n", MaNganh: 2592},
+	{TenNganh: "In ấn (Chi tiết: In chuyển nhiệt)\n", MaNganh: 1811},
+	{TenNganh: "Sản xuất món ăn, thức ăn chế biến sẵn\n(Chi tiết: Sản xuất đậu hủ)\n", MaNganh: 1075},
+	{TenNganh: "Sản xuất nước đá\n(Chi tiết: Sản xuất nước đá viên)\n", MaNganh: 3530},
 }
 
 const (
