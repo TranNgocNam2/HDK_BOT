@@ -20,17 +20,15 @@ type Hokinhdoanh struct {
 }
 
 type DiaChi struct {
-	TinhTP    string `json:"tinh_tp"`
-	QuanHuyen string `json:"quan_huyen"`
-	XaPhuong  string `json:"xa_phuong"`
-	SoNha     string `json:"so_nha"`
+	TinhTP   string `json:"tinh_tp"`
+	XaPhuong string `json:"xa_phuong"`
+	SoNha    string `json:"so_nha"`
 }
 
 type NganhNgheKinhDoanh struct {
 	//STT            string `json:"stt"`
-	TenNganh       string `json:"ten_nganh_nghe"`
-	MaNganh        int    `json:"ma_nganh"`
-	NganhNgheChinh bool   `json:"nganh_nghe_chinh"`
+	TenNganh string `json:"ten_nganh_nghe"`
+	MaNganh  int    `json:"ma_nganh"`
 }
 
 type VonKinhDoanh struct {

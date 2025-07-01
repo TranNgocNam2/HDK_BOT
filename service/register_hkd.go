@@ -77,15 +77,12 @@ func fillHKDTemplate(data model.Hokinhdoanh) error {
 		"{bangchu}":        data.VonKinhDoanh.BangChu,
 		"{sonha1}":         data.DiaChiThuongTru.SoNha,
 		"{xaphuong1}":      data.DiaChiThuongTru.XaPhuong,
-		"{quanhuyen1}":     data.DiaChiThuongTru.QuanHuyen,
 		"{tinhtp1}":        data.DiaChiThuongTru.TinhTP,
 		"{sonha2}":         data.DiaChiLienLac.SoNha,
 		"{xaphuong2}":      data.DiaChiLienLac.XaPhuong,
-		"{quanhuyen2}":     data.DiaChiLienLac.QuanHuyen,
 		"{tinhtp2}":        data.DiaChiLienLac.TinhTP,
 		"{sonha3}":         data.DiaChiKinhDoanh.SoNha,
 		"{xaphuong3}":      data.DiaChiKinhDoanh.XaPhuong,
-		"{quanhuyen3}":     data.DiaChiKinhDoanh.QuanHuyen,
 		"{tinhtp3}":        data.DiaChiKinhDoanh.TinhTP,
 	}
 	fillNganhNghePlaceholders(placeholders, data.NganhNgheKinhDoanh)
@@ -113,78 +110,20 @@ func fillHKDTemplate(data model.Hokinhdoanh) error {
 	return nil
 }
 
-func replaceInParagraph(para document.Paragraph, placeholders map[string]string) {
-	var textBuilder strings.Builder
-	runs := para.Runs()
-	for _, run := range runs {
-		textBuilder.WriteString(run.Text())
-	}
-	text := textBuilder.String()
-
-	changed := false
-	for placeholder, value := range placeholders {
-		if strings.Contains(text, placeholder) {
-			text = strings.ReplaceAll(text, placeholder, value)
-			changed = true
-		}
-	}
-
-	if changed {
-		for _, run := range runs {
-			run.ClearContent()
-		}
-		if len(runs) > 0 {
-			runs[0].AddText(text)
-		}
-	}
-}
-func replaceInParagraph1(para document.Paragraph, placeholders map[string]string) {
-	var textBuilder strings.Builder
-	runs := para.Runs()
-	for _, run := range runs {
-		textBuilder.WriteString(run.Text())
-	}
-
-	// Ghép lại toàn bộ text, loại bỏ line breaks do Word gây ra
-	text := strings.ReplaceAll(textBuilder.String(), "\n", "")
-	text = strings.ReplaceAll(text, "\r", "")
-
-	changed := false
-	for placeholder, value := range placeholders {
-		if strings.Contains(text, placeholder) {
-			text = strings.ReplaceAll(text, placeholder, value)
-			changed = true
-		}
-	}
-
-	if changed {
-		for _, run := range runs {
-			run.ClearContent()
-		}
-		if len(runs) > 0 {
-			runs[0].AddText(text)
-		}
-	}
-}
-
 func fillNganhNghePlaceholders(placeholders map[string]string, list []model.NganhNgheKinhDoanh) {
 	for i := 0; i < 3; i++ {
-		stt := fmt.Sprintf("{stt%d}", i+1)
+		stt := fmt.Sprintf("{s%d}", i+1)
 		ten := fmt.Sprintf("{tennganhnghe%d}", i+1)
 		ma := fmt.Sprintf("{manganh%d}", i+1)
-		chinh := fmt.Sprintf("{nganhnghechinh%d}", i+1)
-
 		if i < len(list) {
 			nn := list[i]
 			placeholders[stt] = strconv.Itoa(i + 1)
 			placeholders[ten] = safe(nn.TenNganh)
 			placeholders[ma] = strconv.Itoa(nn.MaNganh)
-			placeholders[chinh] = convertBoolToString(nn.NganhNgheChinh)
 		} else {
 			placeholders[stt] = ""
 			placeholders[ten] = ""
 			placeholders[ma] = ""
-			placeholders[chinh] = ""
 		}
 	}
 }
@@ -194,11 +133,4 @@ func safe(s string) string {
 		return ""
 	}
 	return s
-}
-
-func convertBoolToString(value bool) string {
-	if value {
-		return "X"
-	}
-	return ""
 }

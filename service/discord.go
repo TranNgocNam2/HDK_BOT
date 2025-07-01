@@ -10,13 +10,19 @@ import (
 )
 
 var NganhNgheDB = []model.NganhNgheKinhDoanh{
-	{TenNganh: "May trang phục (trừ trang phục từ da lông thú)\n(Chi tiết: May mặc; Không tẩy, nhuộm, hồ, in trên các sản phẩm vải, sợi dệt, may, đan)", MaNganh: 1410},
-	{TenNganh: "Giặt là, làm sạch các sản phẩm dệt và lông thú\n(Chi tiết: Giặt ủi)", MaNganh: 9620},
-	{TenNganh: "Bán buôn cá và hải sản", MaNganh: 4632},
+	{TenNganh: "May trang phục (trừ trang phục từ da lông thú)\n(Chi tiết: May mặc; Không tẩy, nhuộm, hồ, in trên các sản phẩm vải, sợi dệt, may, đan)\n", MaNganh: 1410},
+	{TenNganh: "Giặt là, làm sạch các sản phẩm dệt và lông thú\n(Chi tiết: Giặt ủi)\n", MaNganh: 9620},
+	{TenNganh: "Bán buôn thực phẩm \n(Chi tiết: Bán buôn thủy sản)\n", MaNganh: 4632},
+	{TenNganh: "Sản xuất giường, tủ, bàn, ghế\n(Chi tiết: Gia công lắp ráp bàn, ghế gỗ)\n", MaNganh: 3100},
+	{TenNganh: "Sản xuất mì ống, mì sợi và sản phẩm tương tự\n(Chi tiết: Sản xuất mì tươi)\n", MaNganh: 1074},
+	{TenNganh: "Gia công cơ khí; xử lý và tráng phủ kim loại\n(Chi tiết: Gia công tiện, phay, bào; Không rèn, đúc, dập, cắt, gò, hàn, sơn, xi mạ điện, cán kéo kim loại)\n", MaNganh: 2592},
+	{TenNganh: "In ấn (Chi tiết: In chuyển nhiệt)\n", MaNganh: 1811},
+	{TenNganh: "Sản xuất món ăn, thức ăn chế biến sẵn\n(Chi tiết: Sản xuất đậu hủ)\n", MaNganh: 1075},
+	{TenNganh: "Sản xuất nước đá\n(Chi tiết: Sản xuất nước đá viên)\n", MaNganh: 3530},
 }
 
 const (
-	Token      = "MTM4NTE3MzI4MzYyMzY2OTg0MQ.GLFZQt.1n5BgdVYWxtnIoMfdU4DZtegzQYoPKZKWfUKhc"
+	Token      = "MTM4NTE3MzI4MzYyMzY2OTg0MQ.GySm5L.vuNAgi_wVqGuSZuLB_JJjCu5zOSkyp5FyJN2tg"
 	outputPath = "output/"
 )
 
@@ -58,8 +64,6 @@ func handleHKDRegistration(s *discordgo.Session, m *discordgo.MessageCreate) {
 		if len(nganhNgheKinhDoanh) == 0 {
 			s.ChannelMessageSend(m.ChannelID, "❌ Ngành nghề kinh doanh không hợp lệ!")
 			return
-		} else {
-			nganhNgheKinhDoanh[0].NganhNgheChinh = true
 		}
 
 		cccd := get(fields, "CCCD")
@@ -199,7 +203,7 @@ func buildHoKinhDoanhModel(fields map[string]string, nganhNgheKinhDoanh []model.
 		GioiTinh:       get(fields, "Giới tính", "Nam"),
 		NgaySinh:       get(fields, "Ngày sinh"),
 		CCCD:           get(fields, "CCCD"),
-		CoQuan:         get(fields, "Cơ quan", "Quận Bình Tân"),
+		CoQuan:         get(fields, "Cơ quan", "Phường Bình Tân"),
 		CoQuanCap:      get(fields, "Nơi cấp CCCD", "Cục cảnh sát Quản lý hành chính về trật tự xã hội"),
 		NgayCap:        get(fields, "Ngày cấp CCCD"),
 		DanToc:         get(fields, "Dân tộc", "Kinh"),
@@ -208,7 +212,7 @@ func buildHoKinhDoanhModel(fields map[string]string, nganhNgheKinhDoanh []model.
 		TenHoKinhDoanh: get(fields, "Tên hộ kinh doanh", fullName),
 		VonKinhDoanh: model.VonKinhDoanh{
 			BangSo:  get(fields, "Vốn kinh doanh bằng số", "30.000.000"),
-			BangChu: get(fields, "Vốn kinh doanh bằng chữ", "Ba mươi triệu đồng"),
+			BangChu: get(fields, "Vốn kinh doanh bằng chữ", "Ba mươi"),
 		},
 		DiaChiThuongTru:    parseAddress(diaChiThuongTru),
 		DiaChiLienLac:      parseAddress(diaChiLienLac),
@@ -266,10 +270,7 @@ func parseAddress(full string) model.DiaChi {
 		dc.XaPhuong = parts[1]
 	}
 	if len(parts) >= 3 {
-		dc.QuanHuyen = parts[2]
-	}
-	if len(parts) >= 4 {
-		dc.TinhTP = parts[3]
+		dc.TinhTP = parts[2]
 	}
 	return dc
 }
