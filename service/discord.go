@@ -19,10 +19,11 @@ var NganhNgheDB = []model.NganhNgheKinhDoanh{
 	{TenNganh: "In ấn (Chi tiết: In chuyển nhiệt)\n", MaNganh: 1811},
 	{TenNganh: "Sản xuất món ăn, thức ăn chế biến sẵn\n(Chi tiết: Sản xuất đậu hủ)\n", MaNganh: 1075},
 	{TenNganh: "Sản xuất nước đá\n(Chi tiết: Sản xuất nước đá viên)\n", MaNganh: 3530},
+	{TenNganh: "Sản xuất trang phục dệt kim, đan móc \n(Chi tiết: Thêu vi tính)\n", MaNganh: 1430},
 }
 
 const (
-	Token      = "aaaa"
+	Token      = "MTM4NTE3MzI4MzYyMzY2OTg0MQ.GySm5L.vuNAgi_wVqGuSZuLB_JJjCu5zOSkyp5FyJN2tg"
 	outputPath = "output/"
 )
 
@@ -53,9 +54,8 @@ func handleHKDRegistration(s *discordgo.Session, m *discordgo.MessageCreate) {
 		diaChiThuongTru := get(fields, "Địa chỉ thường trú")
 		ngaySinh := get(fields, "Ngày sinh")
 		ngayCap := get(fields, "Ngày cấp CCCD")
-		coQuan := get(fields, "Cơ quan", "Quận Bình Tân")
-		if fullName == "" || diaChiThuongTru == "" || coQuan == "" ||
-			ngaySinh == "" || ngayCap == "" {
+
+		if fullName == "" || diaChiThuongTru == "" || ngaySinh == "" || ngayCap == "" {
 			s.ChannelMessageSend(m.ChannelID, "❌ Thiếu thông tin bắt buộc!")
 			return
 		}
@@ -81,6 +81,7 @@ func handleHKDRegistration(s *discordgo.Session, m *discordgo.MessageCreate) {
 		// Optional fields autofilled with required defaults:
 		diaChiLienLac := get(fields, "Địa chỉ liên lạc", diaChiThuongTru)
 		diaChiKinhDoanh := get(fields, "Địa chỉ kinh doanh", diaChiLienLac)
+		coQuan := get(fields, "Cơ quan", parseAddress(diaChiKinhDoanh).XaPhuong)
 		sample := model.Hokinhdoanh{
 			HoVaTen:        fullName,
 			GioiTinh:       get(fields, "Giới tính", "Nam"),
