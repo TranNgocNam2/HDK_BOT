@@ -22,7 +22,7 @@ var NganhNgheDB = []model.NganhNgheKinhDoanh{
 }
 
 const (
-	Token      = "MTM4NTE3MzI4MzYyMzY2OTg0MQ.GySm5L.vuNAgi_wVqGuSZuLB_JJjCu5zOSkyp5FyJN2tg"
+	Token      = "aaaa"
 	outputPath = "output/"
 )
 
