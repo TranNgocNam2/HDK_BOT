@@ -9,7 +9,6 @@ import (
 	"time"
 )
 
-const HKDTemplatePath = "templates/1.docx"
 const HKDOutputPath = "output"
 
 // Cải thiện hàm replace để xử lý tốt hơn các placeholder bị chia nhỏ
@@ -49,8 +48,8 @@ func replaceInParagraphImproved(para document.Paragraph, placeholders map[string
 	}
 }
 
-func fillHKDTemplate(data model.Hokinhdoanh) error {
-	doc, err := document.Open(HKDTemplatePath)
+func fillHKDTemplate(data model.Hokinhdoanh, path string) error {
+	doc, err := document.Open(path)
 	if err != nil {
 		fmt.Println("Error opening document:", err)
 		return err
@@ -59,8 +58,8 @@ func fillHKDTemplate(data model.Hokinhdoanh) error {
 	now := time.Now()
 
 	placeholders := map[string]string{
-		"{ngay}":           strconv.Itoa(now.Day()),
-		"{thang}":          strconv.Itoa(int(now.Month())),
+		"{ngay}":           "0" + strconv.Itoa(now.Day()),
+		"{thang}":          "0" + strconv.Itoa(int(now.Month())),
 		"{nam}":            strconv.Itoa(now.Year()),
 		"{coquan}":         data.CoQuan,
 		"{hovaten}":        strings.ToUpper(data.HoVaTen),

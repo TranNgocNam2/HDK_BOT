@@ -9,6 +9,9 @@ import (
 	"strings"
 )
 
+const HKDTemplatePath1 = "templates/1.docx"
+const HKDTemplatePath2 = "templates/2.docx"
+
 var NganhNgheDB = []model.NganhNgheKinhDoanh{
 	{TenNganh: "May trang phục (trừ trang phục từ da lông thú)\n(Chi tiết: May mặc; Không tẩy, nhuộm, hồ, in trên các sản phẩm vải, sợi dệt, may, đan)\n", MaNganh: 1410},
 	{TenNganh: "Giặt là, làm sạch các sản phẩm dệt và lông thú\n(Chi tiết: Giặt ủi)\n", MaNganh: 9620},
@@ -22,8 +25,8 @@ var NganhNgheDB = []model.NganhNgheKinhDoanh{
 	{TenNganh: "Sản xuất trang phục dệt kim, đan móc \n(Chi tiết: Thêu vi tính)\n", MaNganh: 1430},
 }
 
-const (
-	Token      = "MTM4NTE3MzI4MzYyMzY2OTg0MQ.GySm5L.vuNAgi_wVqGuSZuLB_JJjCu5zOSkyp5FyJN2tg"
+var (
+	Token      = os.Getenv("DISCORD_BOT_TOKEN")
 	outputPath = "output/"
 )
 
@@ -32,16 +35,103 @@ func MessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 		return
 	}
 
-	if strings.HasPrefix(m.Content, "!register_hkd") {
-		handleHKDRegistration(s, m)
+	if strings.HasPrefix(m.Content, "!register_hkd1") {
+		handleHKDRegistration1(s, m)
 	} else if strings.HasPrefix(m.Content, "!help") {
 		sendHelpMessage(s, m.ChannelID)
-	} else if strings.HasPrefix(m.Content, "!nganhnghe") {
+	} else if strings.HasPrefix(m.Content, "!ma") {
 		listNganhNghe(s, m.ChannelID)
+	}
+	if strings.HasPrefix(m.Content, "!register_hkd2") {
+		handleHKDRegistration2(s, m)
 	}
 }
 
-func handleHKDRegistration(s *discordgo.Session, m *discordgo.MessageCreate) {
+func handleHKDRegistration1(s *discordgo.Session, m *discordgo.MessageCreate) {
+	if m.Author.Bot {
+		return
+	}
+
+	if strings.HasPrefix(m.Content, "!register_hkd") {
+		parts := strings.TrimPrefix(m.Content, "!register_hkd")
+		fields := parseFields(parts)
+		// Required fields:
+		fullName := get(fields, "Họ và tên")
+		diaChiThuongTru := get(fields, "Địa chỉ thường trú")
+		ngaySinh := get(fields, "Ngày sinh")
+		ngayCap := get(fields, "Ngày cấp CCCD")
+
+		if fullName == "" || diaChiThuongTru == "" || ngaySinh == "" || ngayCap == "" {
+			s.ChannelMessageSend(m.ChannelID, "❌ Thiếu thông tin bắt buộc!")
+			return
+		}
+
+		nganhNgheKinhDoanh := searchNganhNgheByMaNganh(get(fields, "Ngành nghề kinh doanh"))
+		if len(nganhNgheKinhDoanh) == 0 {
+			s.ChannelMessageSend(m.ChannelID, "❌ Ngành nghề kinh doanh không hợp lệ!")
+			return
+		}
+
+		cccd := get(fields, "CCCD")
+		if cccd == "" || len(strings.TrimSpace(cccd)) != 12 {
+			s.ChannelMessageSend(m.ChannelID, "❌ CCCD phải có 12 chữ số!")
+			return
+		}
+		mst := get(fields, "Mã số thuế", cccd)
+
+		phone := get(fields, "Số điện thoại")
+		if phone == "" || len(phone) != 10 {
+			s.ChannelMessageSend(m.ChannelID, "❌ Số điện thoại phải có 10 chữ số!")
+			return
+		}
+
+		// Optional fields autofilled with required defaults:
+		diaChiLienLac := get(fields, "Địa chỉ liên lạc", diaChiThuongTru)
+		diaChiKinhDoanh := get(fields, "Địa chỉ kinh doanh", diaChiLienLac)
+		coQuan := get(fields, "Cơ quan", parseAddress(diaChiKinhDoanh).XaPhuong)
+		sample := model.Hokinhdoanh{
+			HoVaTen:        fullName,
+			GioiTinh:       get(fields, "Giới tính", "Nam"),
+			NgaySinh:       ngaySinh,
+			CCCD:           cccd,
+			CoQuan:         coQuan,
+			CoQuanCap:      get(fields, "Nơi cấp CCCD", "Cục cảnh sát Quản lý hành chính về trật tự xã hội"),
+			NgayCap:        ngayCap,
+			DanToc:         get(fields, "Dân tộc", "Kinh"),
+			MST:            mst,
+			SDT:            phone,
+			TenHoKinhDoanh: get(fields, "Tên hộ kinh doanh", fullName),
+			VonKinhDoanh: model.VonKinhDoanh{
+				BangSo:  get(fields, "Vốn kinh Doanh (Bằng Số)", "30.000.000"),
+				BangChu: get(fields, "Vốn kinh Doanh (Bằng Chữ)", "Ba mươi"),
+			},
+			DiaChiThuongTru:    parseAddress(diaChiThuongTru),
+			DiaChiLienLac:      parseAddress(diaChiLienLac),
+			DiaChiKinhDoanh:    parseAddress(diaChiKinhDoanh),
+			NganhNgheKinhDoanh: nganhNgheKinhDoanh,
+		}
+
+		err := fillHKDTemplate(sample, HKDTemplatePath1)
+		if err != nil {
+			fmt.Println("Error filling template:", err)
+			s.ChannelMessageSend(m.ChannelID, "❌ Lỗi tạo tài liệu: "+err.Error())
+			return
+		}
+
+		fmt.Println(phone)
+		file, err := os.Open(outputPath + phone + ".docx")
+		if err != nil {
+			fmt.Println("Error opening file:", err)
+			s.ChannelMessageSend(m.ChannelID, "❌ Không thể đọc file tài liệu: "+err.Error())
+			return
+		}
+		defer file.Close()
+
+		s.ChannelFileSend(m.ChannelID, phone+".docx", file)
+	}
+}
+
+func handleHKDRegistration2(s *discordgo.Session, m *discordgo.MessageCreate) {
 	if m.Author.Bot {
 		return
 	}
@@ -104,7 +194,7 @@ func handleHKDRegistration(s *discordgo.Session, m *discordgo.MessageCreate) {
 			NganhNgheKinhDoanh: nganhNgheKinhDoanh,
 		}
 
-		err := fillHKDTemplate(sample)
+		err := fillHKDTemplate(sample, HKDTemplatePath2)
 		if err != nil {
 			fmt.Println("Error filling template:", err)
 			s.ChannelMessageSend(m.ChannelID, "❌ Lỗi tạo tài liệu: "+err.Error())
@@ -128,30 +218,58 @@ func sendHelpMessage(s *discordgo.Session, channelID string) {
 	helpMsg := `**🏢 Hướng dẫn sử dụng Bot Đăng ký Hộ Kinh Doanh**
 
 **Lệnh chính:**
-` + "`!register_hkd`" + ` - Tạo giấy đề nghị đăng ký hộ kinh doanh
+` + "`!register_hkd1`" + ` - Tạo giấy đề nghị đăng ký hộ kinh doanh (sử dụng mẫu 1)
 
 **Cú pháp:**
 ` + "```" + `
-!register_hkd
-Họ và tên=Nguyễn Văn A
-Giới tính=Nam
-Ngày sinh=01/01/1990  
-Dân tộc=Kinh
-Mã số thuế=123456789
-CCCD=123456789012
-Ngày cấp CCCD=01/01/2020
-Nơi cấp CCCD=Cục cảnh sát QLHC về TTXH
-Địa chỉ thường trú=123 Đường ABC, Phường XYZ, Quận 1, TP.HCM
-Số điện thoại=0123456789
-Ngành nghề kinh doanh=1410
-Vốn kinh doanh bằng số=50.000.000
-Vốn kinh doanh bằng chữ=Năm mươi triệu đồng
+!register_hkd1
+Họ và tên=..................
+Giới tính=Nữ
+Dân tộc: Kinh
+Ngày sinh=../../....
+Mã số thuế=............
+Địa chỉ thường trú=.............................., ...................., .......................
+Ngành nghề kinh doanh=....
+CCCD=............
+Ngày cấp CCCD=../../....
+Số điện thoại=...............
+Tên hộ kinh doanh=.........................
+Địa chỉ kinh doanh=........................., Phường ...................., Thành phố Hồ Chí Minh
+Địa chỉ liên lạc=................................, Phường ...................., Thành phố Hồ Chí Minh
+Vốn kinh Doanh (Bằng Số)=20.000.000
+Vốn kinh Doanh (Bằng Chữ)=Hai mươi
 ` + "```" + `
 
 **Các trường bắt buộc:** Họ và tên, CCCD (12 số), Số điện thoại (10 số), Ngày sinh, Ngày cấp CCCD, Địa chỉ thường trú, Ngành nghề kinh doanh
 
+**Lệnh chính:**
+` + "`!register_hkd2`" + ` - Tạo giấy đề nghị đăng ký hộ kinh doanh (sử dụng mẫu 2 (Phường Bình Tân))
+
+**Cú pháp:**
+` + "```" + `
+!register_hkd2
+Họ và tên=..................
+Giới tính=Nữ
+Dân tộc: Kinh
+Ngày sinh=../../....
+Mã số thuế=............
+Địa chỉ thường trú=.............................., ...................., .......................
+Ngành nghề kinh doanh=....
+CCCD=............
+Ngày cấp CCCD=../../....
+Số điện thoại=...............
+Tên hộ kinh doanh=.........................
+Địa chỉ kinh doanh=........................., Phường ...................., Thành phố Hồ Chí Minh
+Địa chỉ liên lạc=................................, Phường ...................., Thành phố Hồ Chí Minh
+Vốn kinh Doanh (Bằng Số)=20.000.000
+Vốn kinh Doanh (Bằng Chữ)=Hai mươi
+` + "```" + `
+
+**Các trường bắt buộc:** Họ và tên, CCCD (12 số), Số điện thoại (10 số), Ngày sinh, Ngày cấp CCCD, Địa chỉ thường trú, Ngành nghề kinh doanh
+
+
 **Lệnh khác:**
-• ` + "`!nganhnghe`" + ` - Xem danh sách mã ngành nghề
+• ` + "`!ma`" + ` - Xem danh sách mã ngành nghề
 • ` + "`!help`" + ` - Hiển thị hướng dẫn này`
 
 	s.ChannelMessageSend(channelID, helpMsg)
