@@ -23,6 +23,7 @@ var NganhNgheDB = []model.NganhNgheKinhDoanh{
 	{TenNganh: "Sản xuất món ăn, thức ăn chế biến sẵn\n(Chi tiết: Sản xuất đậu hủ)\n", MaNganh: 1075},
 	{TenNganh: "Sản xuất nước đá\n(Chi tiết: Sản xuất nước đá viên)\n", MaNganh: 3530},
 	{TenNganh: "Sản xuất trang phục dệt kim, đan móc \n(Chi tiết: Thêu vi tính)\n", MaNganh: 1430},
+	{TenNganh: "Kinh doanh dịch vụ lưu trú khác (trừ lưu trú ngắn ngày)\n(Chi tiết: Nhà trọ cho công nhân)\n", MaNganh: 5590},
 }
 
 var (
@@ -111,7 +112,7 @@ func handleHKDRegistration1(s *discordgo.Session, m *discordgo.MessageCreate) {
 			NganhNgheKinhDoanh: nganhNgheKinhDoanh,
 		}
 
-		err := fillHKDTemplate(sample, HKDTemplatePath1)
+		output, err := fillHKDTemplate(sample, HKDTemplatePath1)
 		if err != nil {
 			fmt.Println("Error filling template:", err)
 			s.ChannelMessageSend(m.ChannelID, "❌ Lỗi tạo tài liệu: "+err.Error())
@@ -119,7 +120,7 @@ func handleHKDRegistration1(s *discordgo.Session, m *discordgo.MessageCreate) {
 		}
 
 		fmt.Println(phone)
-		file, err := os.Open(outputPath + phone + ".docx")
+		file, err := os.Open(output)
 		if err != nil {
 			fmt.Println("Error opening file:", err)
 			s.ChannelMessageSend(m.ChannelID, "❌ Không thể đọc file tài liệu: "+err.Error())
@@ -194,7 +195,7 @@ func handleHKDRegistration2(s *discordgo.Session, m *discordgo.MessageCreate) {
 			NganhNgheKinhDoanh: nganhNgheKinhDoanh,
 		}
 
-		err := fillHKDTemplate(sample, HKDTemplatePath2)
+		output, err := fillHKDTemplate(sample, HKDTemplatePath2)
 		if err != nil {
 			fmt.Println("Error filling template:", err)
 			s.ChannelMessageSend(m.ChannelID, "❌ Lỗi tạo tài liệu: "+err.Error())
@@ -202,7 +203,7 @@ func handleHKDRegistration2(s *discordgo.Session, m *discordgo.MessageCreate) {
 		}
 
 		fmt.Println(phone)
-		file, err := os.Open(outputPath + phone + ".docx")
+		file, err := os.Open(output)
 		if err != nil {
 			fmt.Println("Error opening file:", err)
 			s.ChannelMessageSend(m.ChannelID, "❌ Không thể đọc file tài liệu: "+err.Error())

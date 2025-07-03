@@ -4,12 +4,14 @@ import (
 	"baliance.com/gooxml/document"
 	"fmt"
 	"hkd.nam2507/model"
+	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"time"
 )
 
-const HKDOutputPath = "output"
+const HKDOutputPath = "C:\\Users\\nam\\Desktop\\GPKD"
 
 // Cải thiện hàm replace để xử lý tốt hơn các placeholder bị chia nhỏ
 func replaceInParagraphImproved(para document.Paragraph, placeholders map[string]string) {
@@ -48,11 +50,11 @@ func replaceInParagraphImproved(para document.Paragraph, placeholders map[string
 	}
 }
 
-func fillHKDTemplate(data model.Hokinhdoanh, path string) error {
+func fillHKDTemplate(data model.Hokinhdoanh, path string) (string, error) {
 	doc, err := document.Open(path)
 	if err != nil {
 		fmt.Println("Error opening document:", err)
-		return err
+		return "", err
 	}
 
 	now := time.Now()
@@ -100,13 +102,25 @@ func fillHKDTemplate(data model.Hokinhdoanh, path string) error {
 		replaceInParagraphImproved(para, placeholders)
 	}
 
-	err = doc.SaveToFile(HKDOutputPath + "/" + data.SDT + ".docx")
+	// Tạo thư mục theo tên
+	folderName := sanitizeFolderName(data.HoVaTen)
+	outputDir := filepath.Join(HKDOutputPath, folderName)
+
+	err = os.MkdirAll(outputDir, os.ModePerm)
 	if err != nil {
-		fmt.Println("Error saving document:", err)
-		return err
+		fmt.Println("Error creating directory:", err)
+		return "", err
 	}
 
-	return nil
+	// Lưu file
+	outputFile := filepath.Join(outputDir, data.SDT+".docx")
+	err = doc.SaveToFile(outputFile)
+	if err != nil {
+		fmt.Println("Error saving document:", err)
+		return "", err
+	}
+
+	return outputFile, nil
 }
 
 func fillNganhNghePlaceholders(placeholders map[string]string, list []model.NganhNgheKinhDoanh) {
@@ -132,4 +146,13 @@ func safe(s string) string {
 		return ""
 	}
 	return s
+}
+
+func sanitizeFolderName(name string) string {
+	// Loại bỏ ký tự đặc biệt, dấu, khoảng trắng dư thừa
+	processed := strings.ToLower(name)
+	processed = strings.ReplaceAll(processed, " ", "_")
+	//reg := regexp.MustCompile(`[^a-zA-Z0-9_-]`)
+	//processed = reg.ReplaceAllString(processed, "")
+	return processed
 }
