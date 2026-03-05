@@ -6,7 +6,6 @@ type Hokinhdoanh struct {
 	GioiTinh           string               `json:"gioi_tinh" binding:"required"`
 	NgaySinh           string               `json:"ngay_sinh" binding:"required"`
 	DanToc             string               `json:"dan_toc" binding:"required"`
-	MST                string               `json:"mst"`
 	CCCD               string               `json:"cccd"`
 	NgayCap            string               `json:"ngay_cap"`
 	CoQuanCap          string               `json:"co_quan_cap"`
@@ -27,7 +26,7 @@ type DiaChi struct {
 
 type NganhNgheKinhDoanh struct {
 	//STT            string `json:"stt"`
-	TenNganh string `json:"ten_nganh_nghe"`
+	TenNganh string `json:"ten_nganh"`
 	MaNganh  int    `json:"ma_nganh"`
 }
 
