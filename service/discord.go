@@ -144,7 +144,7 @@ func handlePendingImages(s *discordgo.Session, m *discordgo.MessageCreate) {
 	// Lưu PDF vào cùng thư mục hồ sơ
 	folderName := sanitizeFolderName(sample.HoVaTen)
 	outputDir := filepath.Join(HKDOutputPath, folderName)
-	pdfPath := filepath.Join(outputDir, "cccd.pdf")
+	pdfPath := filepath.Join(outputDir, "BẢN SAO GIẤY TỜ PHÁP LÝ CỦA CÁ NHÂN_"+strings.ToUpper(sample.HoVaTen)+"_0001.pdf")
 
 	if err := imagesToPDF(imagePaths, pdfPath); err != nil {
 		sendErr("❌ Lỗi tạo PDF CCCD: " + err.Error())

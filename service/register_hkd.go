@@ -204,7 +204,7 @@ func generatePowerOfAttorney(data model.Hokinhdoanh, path string) error {
 		return err
 	}
 
-	return doc.SaveToFile(filepath.Join(outputDir, data.TenHoKinhDoanh+"_uyquyen.docx"))
+	return doc.SaveToFile(filepath.Join(outputDir, "GIẤY ỦY QUYỀN_"+strings.ToUpper(data.TenHoKinhDoanh)+"_0001.docx"))
 }
 
 func fillHKDTemplate(data model.Hokinhdoanh, path string) error {
@@ -243,7 +243,7 @@ func fillHKDTemplate(data model.Hokinhdoanh, path string) error {
 		fmt.Errorf("error creating directory: %w", err)
 	}
 
-	outputFile := filepath.Join(outputDir, data.SDT+".docx")
+	outputFile := filepath.Join(outputDir, "GIẤY ĐỀ NGHỊ ĐĂNG KÝ HỘ KINH DOANH_"+strings.ToUpper(data.HoVaTen)+"_0001"+".docx")
 	if err := doc.SaveToFile(outputFile); err != nil {
 		fmt.Errorf("error saving document: %w", err)
 	}
