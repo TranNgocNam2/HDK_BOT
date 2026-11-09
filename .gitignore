@@ -1,4 +1,7 @@
 .env
 output/
-
-.idea
+.idea/
+*.exe
+scratch/
+*_backup.docx
+debug_*.png
