@@ -1,0 +1,1374 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hệ Thống Đăng Ký Thay Đổi Hộ Kinh Doanh</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --primary-light: #eff6ff;
+      --success: #16a34a;
+      --danger: #dc2626;
+      --gray-50: #f8fafc;
+      --gray-100: #f1f5f9;
+      --gray-200: #e2e8f0;
+      --gray-300: #cbd5e1;
+      --gray-400: #94a3b8;
+      --gray-500: #64748b;
+      --gray-600: #475569;
+      --gray-700: #334155;
+      --gray-800: #1e293b;
+      --radius: 10px;
+      --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+      --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+      --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    }
+
+    body {
+      background: #f1f5f9;
+      color: var(--gray-800);
+      line-height: 1.5;
+      padding-bottom: 80px;
+    }
+
+    .navbar {
+      background: #ffffff;
+      border-bottom: 1px solid var(--gray-200);
+      padding: 16px 24px;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .navbar-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 28px auto;
+      padding: 0 20px;
+    }
+
+    .card {
+      background: #ffffff;
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius);
+      padding: 24px;
+      margin-bottom: 24px;
+      box-shadow: var(--shadow-sm);
+      transition: all 0.2s ease;
+    }
+
+    .card:hover {
+      box-shadow: var(--shadow);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--gray-100);
+    }
+
+    .card-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--gray-800);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .step-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--primary);
+      color: #fff;
+      font-size: 0.85rem;
+      font-weight: 700;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 18px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .form-group.col-span-2 {
+      grid-column: span 2;
+    }
+
+    label {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--gray-700);
+    }
+
+    .required {
+      color: var(--danger);
+    }
+
+    input[type="text"], input[type="number"], select, textarea {
+      padding: 10px 14px;
+      border: 1px solid var(--gray-300);
+      border-radius: 6px;
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.2s;
+      background: #fff;
+    }
+
+    input[type="text"]:focus, input[type="number"]:focus, select:focus, textarea:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+    }
+
+    .uppercase {
+      text-transform: uppercase;
+    }
+
+    .checkbox-label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      font-weight: 500;
+      font-size: 0.95rem;
+      user-select: none;
+      padding: 10px 14px;
+      border: 1px solid var(--gray-200);
+      border-radius: 8px;
+      background: var(--gray-50);
+      transition: background 0.15s, border-color 0.15s;
+    }
+
+    .checkbox-label:hover {
+      background: var(--gray-100);
+    }
+
+    .checkbox-label input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--primary);
+      cursor: pointer;
+    }
+
+    .sub-section {
+      margin-top: 14px;
+      padding: 16px;
+      border: 1px dashed var(--gray-300);
+      border-radius: 8px;
+      background: #fafafa;
+      display: none;
+    }
+
+    .sub-section.active {
+      display: block;
+      animation: fadeIn 0.2s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Bảng ngành nghề */
+    .table-responsive {
+      overflow-x: auto;
+      margin-top: 12px;
+      margin-bottom: 12px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+      background: #fff;
+    }
+
+    th, td {
+      border: 1px solid var(--gray-200);
+      padding: 10px 12px;
+      text-align: left;
+    }
+
+    th {
+      background: var(--gray-100);
+      font-weight: 600;
+      color: var(--gray-700);
+    }
+
+    .text-center {
+      text-align: center;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 18px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-hover);
+    }
+
+    .btn-secondary {
+      background: var(--gray-200);
+      color: var(--gray-700);
+    }
+
+    .btn-secondary:hover {
+      background: var(--gray-300);
+    }
+
+    .btn-danger {
+      background: #fee2e2;
+      color: var(--danger);
+      padding: 6px 10px;
+      font-size: 0.85rem;
+    }
+
+    .btn-danger:hover {
+      background: #fecaca;
+    }
+
+    .btn-sm {
+      padding: 6px 12px;
+      font-size: 0.85rem;
+    }
+
+    /* Clipboard Paste & Drop Zones */
+    .paste-zone {
+      border: 2px dashed var(--gray-300);
+      border-radius: var(--radius);
+      padding: 24px 16px;
+      text-align: center;
+      background: #ffffff;
+      cursor: pointer;
+      position: relative;
+      transition: all 0.2s;
+      outline: none;
+      min-height: 180px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .paste-zone:hover, .paste-zone:focus, .paste-zone.dragover {
+      border-color: var(--primary);
+      background: var(--primary-light);
+    }
+
+    .paste-zone .icon {
+      font-size: 2.2rem;
+      color: var(--gray-400);
+    }
+
+    .paste-zone .instructions {
+      font-size: 0.9rem;
+      color: var(--gray-600);
+    }
+
+    .paste-zone .instructions strong {
+      color: var(--primary);
+    }
+
+    .preview-box {
+      width: 100%;
+      max-height: 240px;
+      object-fit: contain;
+      border-radius: 6px;
+      margin-top: 10px;
+      display: none;
+      border: 1px solid var(--gray-200);
+      background: #fff;
+    }
+
+    .preview-box.show {
+      display: block;
+    }
+
+    .file-badge {
+      display: none;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.85rem;
+      background: #dcfce7;
+      color: #15803d;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-weight: 500;
+    }
+
+    .file-badge.show {
+      display: inline-flex;
+    }
+
+    /* Submit Section */
+    .submit-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: #ffffff;
+      border-top: 1px solid var(--gray-200);
+      padding: 16px 24px;
+      box-shadow: 0 -4px 6px -1px rgb(0 0 0 / 0.05);
+      display: flex;
+      justify-content: center;
+      z-index: 40;
+    }
+
+    .btn-submit {
+      padding: 14px 40px;
+      font-size: 1.1rem;
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    /* Modal kết quả */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      padding: 20px;
+    }
+
+    .modal-overlay.show {
+      display: flex;
+    }
+
+    .modal {
+      background: #ffffff;
+      border-radius: var(--radius);
+      max-width: 800px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 28px;
+      box-shadow: var(--shadow-lg);
+      animation: modalPop 0.25s ease;
+    }
+
+    @keyframes modalPop {
+      from { transform: scale(0.95); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .file-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin: 20px 0;
+    }
+
+    .file-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      border: 1px solid var(--gray-200);
+      border-radius: 8px;
+      background: var(--gray-50);
+    }
+
+    .file-item-name {
+      font-size: 0.9rem;
+      font-weight: 500;
+      word-break: break-all;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .badge-docx {
+      background: #dbeafe;
+      color: #1e40af;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+
+    .badge-pdf {
+      background: #fee2e2;
+      color: #991b1b;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+
+    .loading-spinner {
+      border: 4px solid var(--gray-200);
+      border-top: 4px solid var(--primary);
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 20px auto;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <div class="navbar">
+    <div class="navbar-title">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+      <span>HỆ THỐNG ĐĂNG KÝ THAY ĐỔI HỘ KINH DOANH</span>
+    </div>
+    <div style="display: flex; gap: 10px; align-items: center;">
+      <button type="button" class="btn btn-secondary btn-sm" onclick="fillSampleData()" title="Điền sẵn dữ liệu mẫu vào tất cả các trường">✨ Điền lại mẫu test</button>
+      <button type="button" class="btn btn-secondary btn-sm" onclick="clearForm()" style="color: #dc2626;" title="Xóa toàn bộ biểu mẫu để nhập mới">🗑️ Xoá trắng</button>
+    </div>
+  </div>
+
+  <div class="container">
+    <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: var(--radius); padding: 12px 18px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between;">
+      <div style="display: flex; align-items: center; gap: 10px; color: #1e40af; font-size: 0.92rem;">
+        <span style="font-size: 1.3rem;">🚀</span>
+        <span><strong>Chế độ thử nghiệm:</strong> Toàn bộ biểu mẫu và tệp đính kèm đã được điền sẵn thông tin mẫu. Bạn chỉ cần nhấn nút <strong>"XUẤT TRỌN BỘ HỒ SƠ"</strong> ở dưới để test ngay!</span>
+      </div>
+    </div>
+
+    <!-- BƯỚC 1: THÔNG TIN HỘ KINH DOANH HIỆN TẠI -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">
+          <span class="step-badge">1</span>
+          <span>Thông tin Hộ kinh doanh hiện tại</span>
+        </div>
+      </div>
+      <div class="form-grid">
+        <div class="form-group col-span-2">
+          <label>Tên Hộ kinh doanh hiện tại <span class="required">*</span></label>
+          <input type="text" id="ten_hkd" class="uppercase" placeholder="Ví dụ: HỘ KINH DOANH HOA TƯƠI hoặc HOA TƯƠI" required>
+        </div>
+        <div class="form-group">
+          <label>Mã số hộ kinh doanh / MST <span class="required">*</span></label>
+          <input type="text" id="ma_hkd" placeholder="Ví dụ: 0319888999" required>
+        </div>
+        <div class="form-group">
+          <label>Cơ quan tiếp nhận / Xã, Phường <span class="required">*</span></label>
+          <input type="text" id="co_quan" placeholder="Ví dụ: Phường 5 hoặc Phường Bình Trị Đông B" required>
+        </div>
+        <div class="form-group col-span-2">
+          <label>Họ và tên người ký / Chủ hộ <span class="required">*</span></label>
+          <input type="text" id="hovaten" class="uppercase" placeholder="Ví dụ: NGUYỄN THỊ HUỲNH NHƯ" required>
+        </div>
+      </div>
+    </div>
+
+    <!-- BƯỚC 2: CÁC NỘI DUNG THAY ĐỔI -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">
+          <span class="step-badge">2</span>
+          <span>Các nội dung đề nghị thay đổi (Tick chọn nội dung áp dụng)</span>
+        </div>
+      </div>
+
+      <!-- 2.1 ĐỔI TÊN HKD -->
+      <label class="checkbox-label" style="margin-bottom: 12px;">
+        <input type="checkbox" id="chk_ten" onchange="toggleSection('sec_ten', this.checked)">
+        <span><strong>1. Thay đổi tên hộ kinh doanh</strong></span>
+      </label>
+      <div id="sec_ten" class="sub-section">
+        <div class="form-group">
+          <label>Tên hộ kinh doanh sau khi thay đổi (chữ in hoa) <span class="required">*</span></label>
+          <input type="text" id="ten_hkd_moi" class="uppercase" placeholder="Ví dụ: HỘ KINH DOANH HOA TƯƠI SÀI GÒN">
+        </div>
+      </div>
+
+      <!-- 2.2 ĐỔI TRỤ SỞ HKD -->
+      <label class="checkbox-label" style="margin-bottom: 12px;">
+        <input type="checkbox" id="chk_truso" onchange="toggleSection('sec_truso', this.checked)">
+        <span><strong>2. Thay đổi địa chỉ trụ sở kinh doanh</strong></span>
+      </label>
+      <div id="sec_truso" class="sub-section">
+        <div class="form-grid">
+          <div class="form-group col-span-2">
+            <label>Số nhà, ngách/hẻm, ngõ, đường/phố/tổ/ấp/thôn <span class="required">*</span></label>
+            <input type="text" id="truso_sonha" placeholder="Ví dụ: 123/45 Đường Số 7, Khu phố 3">
+          </div>
+          <div class="form-group">
+            <label>Xã / Phường / Thị trấn <span class="required">*</span></label>
+            <input type="text" id="truso_coquan" placeholder="Nếu để trống sẽ lấy theo Cơ quan ở Bước 1">
+          </div>
+          <div class="form-group">
+            <label>Tỉnh / Thành phố <span class="required">*</span></label>
+            <input type="text" id="truso_thanhpho" value="Thành phố Hồ Chí Minh">
+          </div>
+          <div class="form-group">
+            <label>Điện thoại liên hệ <span class="required">*</span></label>
+            <input type="text" id="truso_sdt" placeholder="Ví dụ: 0901 234 567" oninput="formatPhoneInput(this)">
+          </div>
+          <div class="form-group col-span-2" style="margin-top: 4px;">
+            <label class="checkbox-label" style="background:#fff; border-color: #cbd5e1; margin-bottom: 6px;">
+              <input type="checkbox" id="chk_thongtinthem" onchange="onThongTinThemChange(this.checked)">
+              <span>Bổ sung/cập nhật thông tin địa chỉ mới vào mục <em>{thongtinthem}</em></span>
+            </label>
+            <div id="sec_thongtinthem" style="margin-top: 6px;">
+              <input type="text" id="thongtinthem" placeholder="Nhập nội dung cập nhật, bổ sung vào mục {thongtinthem} (ví dụ: Số phòng, số tầng, tòa nhà...)" style="width:100%;" oninput="onThongTinThemInput(this.value)">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2.3 ĐỔI NGÀNH NGHỀ KINH DOANH -->
+      <label class="checkbox-label" style="margin-bottom: 12px;">
+        <input type="checkbox" id="chk_nganhnghe" onchange="toggleSection('sec_nganhnghe', this.checked)">
+        <span><strong>3. Thay đổi ngành, nghề kinh doanh (Tuần tự: Bổ sung trước, Bỏ bớt sau)</strong></span>
+      </label>
+      <div id="sec_nganhnghe" class="sub-section">
+        <!-- BẢNG BỔ SUNG -->
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 8px;">
+          <h4 style="color:var(--primary); font-size:0.95rem;">3.1 Bổ sung ngành, nghề kinh doanh (Mục 1 - Bảng 5)</h4>
+          <button type="button" class="btn btn-secondary btn-sm" onclick="addNganhRow('table_bosung')">+ Thêm ngành bổ sung</button>
+        </div>
+        <div class="table-responsive">
+          <table id="table_bosung">
+            <thead>
+              <tr>
+                <th style="width: 50px;" class="text-center">STT</th>
+                <th style="width: 110px;">Mã ngành</th>
+                <th>Tên ngành nghề bổ sung (kèm chi tiết nếu có)</th>
+                <th style="width: 105px;" class="text-center">Ngành chính<br><span style="font-size:0.75rem; font-weight:normal; color:var(--gray-500);">(Chỉ chọn 1)</span></th>
+                <th style="width: 60px;" class="text-center">Xóa</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Dynamic rows -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- BẢNG BỎ BỚT -->
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top: 18px; margin-bottom: 8px;">
+          <h4 style="color:#b91c1c; font-size:0.95rem;">3.2 Bỏ bớt ngành, nghề kinh doanh (Mục 2 - Bảng 6)</h4>
+          <button type="button" class="btn btn-secondary btn-sm" onclick="addNganhRow('table_bo')">+ Thêm ngành bỏ bớt</button>
+        </div>
+        <div class="table-responsive">
+          <table id="table_bo">
+            <thead>
+              <tr>
+                <th style="width: 50px;" class="text-center">STT</th>
+                <th style="width: 110px;">Mã ngành</th>
+                <th>Tên ngành nghề bỏ bớt</th>
+                <th style="width: 105px;" class="text-center">Ngành chính<br><span style="font-size:0.75rem; font-weight:normal; color:var(--gray-500);">(Chỉ chọn 1)</span></th>
+                <th style="width: 60px;" class="text-center">Xóa</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Dynamic rows -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 2.4 ĐỔI VỐN KINH DOANH -->
+      <label class="checkbox-label" style="margin-bottom: 12px;">
+        <input type="checkbox" id="chk_von" onchange="toggleSection('sec_von', this.checked)">
+        <span><strong>4. Thay đổi vốn kinh doanh</strong></span>
+      </label>
+      <div id="sec_von" class="sub-section">
+        <div class="form-grid">
+          <div class="form-group col-span-2">
+            <label>Vốn sau khi thay đổi (bằng số, chữ, VNĐ) <span class="required">*</span></label>
+            <input type="text" id="von_moi" placeholder="Ví dụ: 100.000.000 VNĐ (Một trăm triệu đồng)">
+          </div>
+          <div class="form-group">
+            <label>Thời điểm thay đổi vốn</label>
+            <input type="text" id="von_thoigian" placeholder="Ví dụ: 10/11/2026">
+          </div>
+          <div class="form-group">
+            <label>Hình thức thay đổi vốn</label>
+            <select id="von_hinhthuc">
+              <option value="Tăng vốn">Tăng vốn</option>
+              <option value="Giảm vốn">Giảm vốn</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2.5 ĐĂNG KÝ CẤP ĐỔI SANG GCN -->
+      <label class="checkbox-label">
+        <input type="checkbox" id="chk_capdoi" onchange="toggleSection('sec_capdoi', this.checked)">
+        <span><strong>5. Đăng ký cấp đổi sang Giấy chứng nhận đăng ký hộ kinh doanh</strong></span>
+      </label>
+      <div id="sec_capdoi" class="sub-section">
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Hình thức</label>
+            <div style="padding:10px 0; font-weight:600; color:var(--primary);">
+              ☑ Cá nhân (được tự động đánh dấu vào đơn)
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Số lao động (nếu có)</label>
+            <input type="text" id="capdoi_solaodong" placeholder="Ví dụ: 5 (nếu để trống sẽ không hiển thị)">
+          </div>
+        </div>
+        <p style="font-size:0.85rem; color:var(--gray-500); margin-top:6px;">
+          <em>Lưu ý: Nếu không chọn mục này, hệ thống sẽ tự động để trống hoặc chuyển các placeholder phần dưới về định dạng chấm (....) theo đúng yêu cầu.</em>
+        </p>
+      </div>
+
+    </div>
+
+    <!-- BƯỚC 3: GIẤY ỦY QUYỀN -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">
+          <span class="step-badge">3</span>
+          <span>Thông tin Giấy Ủy Quyền (uyquyen_thaydoi.docx)</span>
+        </div>
+      </div>
+      <div class="form-grid">
+        <div class="form-group col-span-2">
+          <label>Bên ủy quyền (Họ và tên) <span class="required">*</span></label>
+          <input type="text" id="uq_hovaten" class="uppercase" placeholder="Tự động đồng bộ từ Bước 1">
+        </div>
+        <div class="form-group">
+          <label>Ngày sinh (dd/mm/yyyy) <span class="required">*</span></label>
+          <input type="text" id="uq_ngaysinh" placeholder="Ví dụ: 15/08/1995">
+        </div>
+        <div class="form-group">
+          <label>Số CCCD / Mã định danh <span class="required">*</span></label>
+          <input type="text" id="uq_cccd" placeholder="Ví dụ: 079195001234">
+        </div>
+        <div class="form-group">
+          <label>Ngày cấp CCCD <span class="required">*</span></label>
+          <input type="text" id="uq_ngaycap" placeholder="Ví dụ: 10/10/2021">
+        </div>
+        <div class="form-group">
+          <label>Nơi cấp CCCD</label>
+          <input type="text" id="uq_coquancap" value="Cục Trưởng Cục Cảnh Sát Quản Lý Hành Chính Về Trật Tự Xã Hội">
+        </div>
+        <div class="form-group col-span-2">
+          <label>Địa chỉ thường trú <span class="required">*</span></label>
+          <input type="text" id="uq_diachi" placeholder="Ví dụ: 123 Đường Số 7, Phường Bình Trị Đông B, Quận Bình Tân, TP.HCM">
+        </div>
+      </div>
+      <div style="margin-top:16px; padding:12px; background:#f0fdf4; border-radius:6px; border:1px solid #bbf7d0; font-size:0.875rem;">
+        <strong>Bên nhận ủy quyền (Bên B):</strong> Đã cố định <strong>TRẦN NGỌC NAM</strong> (Sinh ngày: 25/07/2003, Số định danh: 075203000065).
+      </div>
+    </div>
+
+    <!-- BƯỚC 4: HÌNH ẢNH & DÁN TỪ CLIPBOARD (Ctrl+V) -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">
+          <span class="step-badge">4</span>
+          <span>Đính kèm hình ảnh (Hỗ trợ Dán trực tiếp từ Clipboard Ctrl+V)</span>
+        </div>
+      </div>
+      <p style="font-size:0.9rem; color:var(--gray-600); margin-bottom:18px;">
+        💡 <strong>Mẹo:</strong> Bạn chỉ cần chụp màn hình hoặc Copy ảnh từ Zalo / Messenger, sau đó <strong>click vào ô bên dưới và nhấn phím Ctrl + V</strong>.
+      </p>
+
+      <div class="form-grid">
+        <!-- VÙNG 1: GIẤY CHỨNG NHẬN CŨ -->
+        <div class="form-group col-span-2">
+          <label>1. Giấy chứng nhận đăng ký hộ kinh doanh cũ (Ảnh PNG/JPG hoặc file PDF)</label>
+          <div class="paste-zone" id="zone_gcn" tabindex="0">
+            <div class="icon">📄</div>
+            <div class="instructions">
+              Click vào đây rồi nhấn <strong>Ctrl + V</strong> để dán ảnh giấy chứng nhận cũ<br>
+              <span style="font-size:0.8rem; color:var(--gray-400);">Hoặc kéo thả file / click để chọn từ máy tính</span>
+            </div>
+            <input type="file" id="file_gcn" accept="image/*,application/pdf" style="display:none;">
+            <input type="hidden" id="data_gcn">
+            <span class="file-badge" id="badge_gcn">✓ Đã nhận tệp</span>
+            <img id="prev_gcn" class="preview-box">
+          </div>
+        </div>
+
+        <!-- VÙNG 2: CCCD MẶT TRƯỚC -->
+        <div class="form-group">
+          <label>2. Căn cước công dân (Mặt trước)</label>
+          <div class="paste-zone" id="zone_cccd_truoc" tabindex="0">
+            <div class="icon">🪪</div>
+            <div class="instructions">
+              Click vào đây & nhấn <strong>Ctrl + V</strong><br>
+              <span style="font-size:0.8rem; color:var(--gray-400);">Dán ảnh CCCD Mặt trước</span>
+            </div>
+            <input type="file" id="file_cccd_truoc" accept="image/*" style="display:none;">
+            <input type="hidden" id="data_cccd_truoc">
+            <span class="file-badge" id="badge_cccd_truoc">✓ Đã nhận ảnh</span>
+            <img id="prev_cccd_truoc" class="preview-box">
+          </div>
+        </div>
+
+        <!-- VÙNG 3: CCCD MẶT SAU -->
+        <div class="form-group">
+          <label>3. Căn cước công dân (Mặt sau)</label>
+          <div class="paste-zone" id="zone_cccd_sau" tabindex="0">
+            <div class="icon">🪪</div>
+            <div class="instructions">
+              Click vào đây & nhấn <strong>Ctrl + V</strong><br>
+              <span style="font-size:0.8rem; color:var(--gray-400);">Dán ảnh CCCD Mặt sau</span>
+            </div>
+            <input type="file" id="file_cccd_sau" accept="image/*" style="display:none;">
+            <input type="hidden" id="data_cccd_sau">
+            <span class="file-badge" id="badge_cccd_sau">✓ Đã nhận ảnh</span>
+            <img id="prev_cccd_sau" class="preview-box">
+          </div>
+        </div>
+      </div>
+      <p style="font-size:0.85rem; color:var(--success); margin-top:12px; font-weight:500;">
+        ✨ Hệ thống sẽ tự động ghép 2 mặt CCCD thành 1 trang A4 PDF tiêu chuẩn pháp lý.
+      </p>
+    </div>
+
+  </div>
+
+  <!-- FIXED SUBMIT BUTTON -->
+  <div class="submit-bar">
+    <button type="button" class="btn btn-primary btn-submit" id="btn_submit" onclick="submitForm()">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+      <span>XUẤT TRỌN BỘ HỒ SƠ</span>
+    </button>
+  </div>
+
+  <!-- MODAL KẾT QUẢ -->
+  <div class="modal-overlay" id="result_modal">
+    <div class="modal">
+      <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--gray-200); padding-bottom:12px;">
+        <h3 style="color:#16a34a; font-size:1.2rem; display:flex; align-items:center; gap:8px;">
+          <span>✅</span>
+          <span>Đã Lưu Trọn Bộ Hồ Sơ Vào Máy Tính!</span>
+        </h3>
+        <button class="btn btn-secondary btn-sm" onclick="closeModal()">Đóng</button>
+      </div>
+
+      <div id="modal_loading" style="display:none; text-align:center; padding:30px 0;">
+        <div class="loading-spinner"></div>
+        <p style="font-weight:600; margin-top:10px;">Đang điền biểu mẫu, chuyển đổi PDF và lưu vào thư mục đích...</p>
+      </div>
+
+      <div id="modal_content" style="display:none;">
+        <div style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:8px; padding:14px; margin-top:16px;">
+          <div style="font-size:0.875rem; color:#166534; font-weight:600;">📁 Thư mục đích trên máy tính:</div>
+          <div style="font-size:0.95rem; font-weight:700; color:#15803d; word-break:break-all; margin-top:4px;" id="out_folder_path"></div>
+          <div style="font-size:0.8rem; color:#15803d; margin-top:6px;">
+            ✓ Thư mục đã được tự động mở trên màn hình máy tính của bạn (không cần tải về lại).
+          </div>
+        </div>
+
+        <div style="margin-top:18px;">
+          <div style="font-size:0.875rem; font-weight:600; color:var(--gray-700); margin-bottom:8px;">
+            Danh mục các tệp đã lưu trong thư mục:
+          </div>
+          <div class="file-list" id="files_container">
+            <!-- Danh sách 4 file hồ sơ -->
+          </div>
+        </div>
+
+        <div style="display:flex; gap:12px; justify-content:flex-end; margin-top:20px; border-top:1px solid var(--gray-200); padding-top:16px;">
+          <button class="btn btn-primary" id="btn_open_folder" onclick="openFolderOnDisk()">
+            📁 Mở lại thư mục trên máy tính
+          </button>
+          <button class="btn btn-secondary" onclick="closeModal()">
+            Hoàn tất
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCRIPT LOGIC -->
+  <script>
+    let industryCatalog = [];
+    let currentFolderName = "";
+
+    // Tự động tải danh mục ngành nghề
+    fetch('/api/nganh-nghe')
+      .then(res => res.json())
+      .then(data => {
+        industryCatalog = data || [];
+      })
+      .catch(e => console.log("Lỗi tải danh mục ngành nghề:", e));
+
+    // Đồng bộ tên từ Bước 1 sang Giấy ủy quyền
+    document.getElementById('hovaten').addEventListener('input', function(e) {
+      document.getElementById('uq_hovaten').value = e.target.value.toUpperCase();
+    });
+
+    function toggleSection(secId, show) {
+      const el = document.getElementById(secId);
+      if (show) {
+        el.classList.add('active');
+      } else {
+        el.classList.remove('active');
+      }
+    }
+
+    function onThongTinThemChange(checked) {
+      const input = document.getElementById('thongtinthem');
+      if (checked && input) {
+        input.focus();
+      }
+    }
+
+    function onThongTinThemInput(val) {
+      const chk = document.getElementById('chk_thongtinthem');
+      if (chk) {
+        if (val.trim().length > 0) {
+          chk.checked = true;
+        }
+      }
+    }
+
+    function formatPhoneInput(el) {
+      let val = el.value.replace(/\D/g, '');
+      if (val.length > 10) val = val.substring(0, 10);
+      if (val.length > 7) {
+        el.value = val.substring(0, 4) + ' ' + val.substring(4, 7) + ' ' + val.substring(7);
+      } else if (val.length > 4) {
+        el.value = val.substring(0, 4) + ' ' + val.substring(4);
+      } else {
+        el.value = val;
+      }
+    }
+
+    // Dynamic row addition for ngành nghề (cả Bảng 5 Bổ sung & Bảng 6 Bỏ bớt đều hỗ trợ Ngành chính)
+    function addNganhRow(tableId, code = '', name = '', isMain = false) {
+      const tbody = document.querySelector(`#${tableId} tbody`);
+      const rowCount = tbody.rows.length + 1;
+      const tr = document.createElement('tr');
+
+      const checkedAttr = isMain ? 'checked' : '';
+      const chinhCol = `<td class="text-center"><input type="checkbox" class="nganh-chinh" ${checkedAttr} style="width:18px; height:18px; cursor:pointer;" onchange="onSelectNganhChinh(this, '${tableId}')" title="Chỉ chọn tối đa 1 ngành chính"></td>`;
+
+      tr.innerHTML = `
+        <td class="text-center stt-cell">${rowCount}</td>
+        <td>
+          <input type="text" class="nganh-ma" value="${code}" placeholder="4 số" style="width:100%; text-align:center;" oninput="onMaNganhInput(this)">
+        </td>
+        <td>
+          <input type="text" class="nganh-ten" value="${name}" placeholder="Tên ngành và chi tiết (nếu có)" style="width:100%;">
+        </td>
+        ${chinhCol}
+        <td class="text-center">
+          <button type="button" class="btn btn-danger btn-sm" onclick="removeNganhRow(this, '${tableId}')">✕</button>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    }
+
+    function onSelectNganhChinh(cb, tableId) {
+      if (cb.checked) {
+        const selector = tableId ? `#${tableId} .nganh-chinh` : '.nganh-chinh';
+        document.querySelectorAll(selector).forEach(other => {
+          if (other !== cb) {
+            other.checked = false;
+          }
+        });
+      }
+    }
+
+    function removeNganhRow(btn, tableId) {
+      const row = btn.closest('tr');
+      row.remove();
+      // Re-index STT
+      const rows = document.querySelectorAll(`#${tableId} tbody tr`);
+      rows.forEach((r, idx) => {
+        r.querySelector('.stt-cell').innerText = idx + 1;
+      });
+    }
+
+    function onMaNganhInput(inputEl) {
+      const code = inputEl.value.trim();
+      if (code.length >= 4) {
+        const row = inputEl.closest('tr');
+        const tenInput = row.querySelector('.nganh-ten');
+        const match = industryCatalog.find(item => String(item.ma_nganh) === code);
+        if (match && !tenInput.value) {
+          tenInput.value = match.ten_nganh.replace(/\n/g, ' ').trim();
+        }
+      }
+    }
+
+    // Setup paste zones
+    function setupPasteZone(zoneId, fileInputId, hiddenDataId, prevImgId, badgeId) {
+      const zone = document.getElementById(zoneId);
+      const fileInput = document.getElementById(fileInputId);
+      const hiddenInput = document.getElementById(hiddenDataId);
+      const prevImg = document.getElementById(prevImgId);
+      const badge = document.getElementById(badgeId);
+
+      // Click zone triggers file selection
+      zone.addEventListener('click', (e) => {
+        if (e.target !== fileInput && e.target !== prevImg) {
+          zone.focus();
+        }
+      });
+
+      zone.addEventListener('dblclick', () => {
+        fileInput.click();
+      });
+
+      fileInput.addEventListener('change', () => {
+        if (fileInput.files && fileInput.files[0]) {
+          readFile(fileInput.files[0]);
+        }
+      });
+
+      zone.addEventListener('paste', (e) => {
+        const items = (e.clipboardData || window.clipboardData).items;
+        for (let item of items) {
+          if (item.type.indexOf('image') !== -1) {
+            const blob = item.getAsFile();
+            readFile(blob);
+            e.preventDefault();
+            break;
+          }
+        }
+      });
+
+      zone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        zone.classList.add('dragover');
+      });
+
+      zone.addEventListener('dragleave', () => {
+        zone.classList.remove('dragover');
+      });
+
+      zone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        zone.classList.remove('dragover');
+        if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+          readFile(e.dataTransfer.files[0]);
+        }
+      });
+
+      function readFile(file) {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          hiddenInput.value = event.target.result;
+          if (file.type.startsWith('image/')) {
+            prevImg.src = event.target.result;
+            prevImg.classList.add('show');
+          } else {
+            prevImg.classList.remove('show');
+          }
+          badge.classList.add('show');
+          badge.innerText = `✓ Đã nhận: ${file.name || 'Ảnh từ Clipboard'}`;
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    setupPasteZone('zone_gcn', 'file_gcn', 'data_gcn', 'prev_gcn', 'badge_gcn');
+    setupPasteZone('zone_cccd_truoc', 'file_cccd_truoc', 'data_cccd_truoc', 'prev_cccd_truoc', 'badge_cccd_truoc');
+    setupPasteZone('zone_cccd_sau', 'file_cccd_sau', 'data_cccd_sau', 'prev_cccd_sau', 'badge_cccd_sau');
+
+    // Global paste helper: if user presses Ctrl+V anywhere and focused on a zone
+    window.addEventListener('paste', (e) => {
+      const activeEl = document.activeElement;
+      if (activeEl && activeEl.classList.contains('paste-zone')) {
+        // Handled by zone's listener
+        return;
+      }
+    });
+
+    // SUBMIT FORM
+    async function submitForm() {
+      const tenHKD = document.getElementById('ten_hkd').value.trim();
+      const maHKD = document.getElementById('ma_hkd').value.trim();
+      const coQuan = document.getElementById('co_quan').value.trim();
+      const hoVaTen = document.getElementById('hovaten').value.trim();
+
+      if (!tenHKD || !maHKD || !coQuan || !hoVaTen) {
+        alert("Vui lòng nhập đầy đủ các trường bắt buộc ở Bước 1 (Tên HKD, Mã số, Cơ quan, Họ tên chủ hộ).");
+        return;
+      }
+
+      // Payload
+      const payload = {
+        thay_doi: {
+          ten_hkd: tenHKD,
+          ma_hkd: maHKD,
+          co_quan: coQuan,
+          ho_va_ten: hoVaTen,
+          cap_doi_gcn: document.getElementById('chk_capdoi').checked,
+          so_lao_dong: document.getElementById('capdoi_solaodong').value.trim(),
+          thong_tin_them: document.getElementById('chk_thongtinthem').checked ? document.getElementById('thongtinthem').value.trim() : ""
+        },
+        uy_quyen: {
+          ho_va_ten: document.getElementById('uq_hovaten').value.trim() || hoVaTen,
+          ngay_sinh: document.getElementById('uq_ngaysinh').value.trim(),
+          cccd: document.getElementById('uq_cccd').value.trim(),
+          ngay_cap: document.getElementById('uq_ngaycap').value.trim(),
+          co_quan_cap: document.getElementById('uq_coquancap').value.trim(),
+          dia_chi_thuong_tru: document.getElementById('uq_diachi').value.trim(),
+          co_quan: coQuan
+        },
+        gcn_image_base64: document.getElementById('data_gcn').value,
+        cccd_truoc_base64: document.getElementById('data_cccd_truoc').value,
+        cccd_sau_base64: document.getElementById('data_cccd_sau').value
+      };
+
+      // Đổi tên
+      if (document.getElementById('chk_ten').checked) {
+        payload.thay_doi.thay_doi_ten = {
+          ten_hkd_moi: document.getElementById('ten_hkd_moi').value.trim()
+        };
+      }
+
+      // Đổi trụ sở
+      if (document.getElementById('chk_truso').checked) {
+        payload.thay_doi.thay_doi_tru_so = {
+          so_nha: document.getElementById('truso_sonha').value.trim(),
+          co_quan: document.getElementById('truso_coquan').value.trim() || coQuan,
+          thanh_pho: document.getElementById('truso_thanhpho').value.trim() || "Thành phố Hồ Chí Minh",
+          sdt: document.getElementById('truso_sdt').value.trim()
+        };
+      }
+
+      // Đổi ngành nghề
+      if (document.getElementById('chk_nganhnghe').checked) {
+        const boSung = [];
+        let hasMain = false;
+        document.querySelectorAll('#table_bosung tbody tr').forEach(row => {
+          const ma = parseInt(row.querySelector('.nganh-ma').value.trim()) || 0;
+          const ten = row.querySelector('.nganh-ten').value.trim();
+          let laChinh = row.querySelector('.nganh-chinh') ? row.querySelector('.nganh-chinh').checked : false;
+          if (laChinh) {
+            if (!hasMain) {
+              hasMain = true;
+            } else {
+              laChinh = false;
+            }
+          }
+          if (ten || ma > 0) {
+            boSung.push({ ma_nganh: ma, ten_nganh: ten, la_nganh_chinh: laChinh });
+          }
+        });
+
+        const bo = [];
+        let hasMainBo = false;
+        document.querySelectorAll('#table_bo tbody tr').forEach(row => {
+          const ma = parseInt(row.querySelector('.nganh-ma').value.trim()) || 0;
+          const ten = row.querySelector('.nganh-ten').value.trim();
+          let laChinh = row.querySelector('.nganh-chinh') ? row.querySelector('.nganh-chinh').checked : false;
+          if (laChinh) {
+            if (!hasMainBo) {
+              hasMainBo = true;
+            } else {
+              laChinh = false;
+            }
+          }
+          if (ten || ma > 0) {
+            bo.push({ ma_nganh: ma, ten_nganh: ten, la_nganh_chinh: laChinh });
+          }
+        });
+
+        payload.thay_doi.thay_doi_nganh_nghe = {
+          bo_sung: boSung,
+          bo: bo
+        };
+      }
+
+      // Đổi vốn
+      if (document.getElementById('chk_von').checked) {
+        payload.thay_doi.thay_doi_von = {
+          von_kinh_doanh_moi: document.getElementById('von_moi').value.trim(),
+          thoi_gian_thay_doi: document.getElementById('von_thoigian').value.trim(),
+          hinh_thuc_thay_doi: document.getElementById('von_hinhthuc').value
+        };
+      }
+
+      // Show Modal Loading
+      document.getElementById('result_modal').classList.add('show');
+      document.getElementById('modal_loading').style.display = 'block';
+      document.getElementById('modal_content').style.display = 'none';
+
+      try {
+        const response = await fetch('/api/thaydoi/submit', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        const result = await response.json();
+        if (!result.success) {
+          throw new Error(result.error || "Có lỗi xảy ra khi tạo hồ sơ");
+        }
+
+        currentFolderName = result.folder;
+        document.getElementById('out_folder_path').innerText = result.full_path || ('Desktop\\GPKD\\' + result.folder);
+
+        const container = document.getElementById('files_container');
+        container.innerHTML = '';
+
+        result.files.forEach(f => {
+          const isDocx = f.name.endsWith('.docx');
+          const badge = isDocx ? '<span class="badge-docx">DOCX</span>' : '<span class="badge-pdf">PDF</span>';
+          const div = document.createElement('div');
+          div.className = 'file-item';
+          div.innerHTML = `
+            <div class="file-item-name">
+              ${badge}
+              <span>${f.name}</span>
+            </div>
+            <span style="color:#16a34a; font-weight:600; font-size:0.85rem; display:inline-flex; align-items:center; gap:4px;">
+              ✓ Đã lưu
+            </span>
+          `;
+          container.appendChild(div);
+        });
+
+        document.getElementById('modal_loading').style.display = 'none';
+        document.getElementById('modal_content').style.display = 'block';
+
+      } catch (err) {
+        alert("Lỗi: " + err.message);
+        closeModal();
+      }
+    }
+
+    function closeModal() {
+      document.getElementById('result_modal').classList.remove('show');
+    }
+
+    function openFolderOnDisk() {
+      if (!currentFolderName) return;
+      fetch(`/api/open-folder?folder=${encodeURIComponent(currentFolderName)}`, { method: 'POST' })
+        .catch(e => console.log(e));
+    }
+
+    function createSampleImage(title, subtitle, detail, width, height, bgColor, headerColor) {
+      const canvas = document.createElement('canvas');
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext('2d');
+
+      ctx.fillStyle = bgColor || '#f8fafc';
+      ctx.fillRect(0, 0, width, height);
+
+      ctx.strokeStyle = '#94a3b8';
+      ctx.lineWidth = 6;
+      ctx.strokeRect(10, 10, width - 20, height - 20);
+
+      ctx.fillStyle = headerColor || '#1e3a8a';
+      ctx.fillRect(10, 10, width - 20, Math.floor(height * 0.12));
+
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold ' + Math.floor(height * 0.045) + 'px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(title, width / 2, height * 0.06);
+
+      ctx.fillStyle = '#1e293b';
+      ctx.font = 'bold ' + Math.floor(height * 0.038) + 'px sans-serif';
+      ctx.fillText(subtitle, width / 2, height * 0.42);
+
+      ctx.font = Math.floor(height * 0.03) + 'px sans-serif';
+      ctx.fillStyle = '#475569';
+      ctx.fillText(detail, width / 2, height * 0.50);
+
+      ctx.save();
+      ctx.translate(width / 2, height * 0.70);
+      ctx.rotate(-0.15);
+      ctx.strokeStyle = 'rgba(220, 38, 38, 0.4)';
+      ctx.lineWidth = 4;
+      ctx.strokeRect(-180, -40, 360, 80);
+      ctx.fillStyle = 'rgba(220, 38, 38, 0.5)';
+      ctx.font = 'bold ' + Math.floor(height * 0.045) + 'px sans-serif';
+      ctx.fillText('BẢN MẪU THỬ NGHIỆM', 0, 8);
+      ctx.restore();
+
+      return canvas.toDataURL('image/png');
+    }
+
+    function setSampleFile(hiddenDataId, prevImgId, badgeId, base64Data, filename) {
+      const hiddenInput = document.getElementById(hiddenDataId);
+      const prevImg = document.getElementById(prevImgId);
+      const badge = document.getElementById(badgeId);
+      hiddenInput.value = base64Data;
+      prevImg.src = base64Data;
+      prevImg.classList.add('show');
+      badge.classList.add('show');
+      badge.innerText = `✓ ${filename}`;
+    }
+
+    function clearSampleFile(fileInputId, hiddenDataId, prevImgId, badgeId) {
+      const fileInput = document.getElementById(fileInputId);
+      if (fileInput) fileInput.value = '';
+      const hiddenInput = document.getElementById(hiddenDataId);
+      if (hiddenInput) hiddenInput.value = '';
+      const prevImg = document.getElementById(prevImgId);
+      if (prevImg) {
+        prevImg.src = '';
+        prevImg.classList.remove('show');
+      }
+      const badge = document.getElementById(badgeId);
+      if (badge) {
+        badge.classList.remove('show');
+        badge.innerText = '';
+      }
+    }
+
+    function fillSampleData() {
+      // 1. Thông tin HKD hiện tại
+      document.getElementById('ten_hkd').value = 'HỘ KINH DOANH HOA TƯƠI MINH ANH';
+      document.getElementById('ma_hkd').value = '0319888999';
+      document.getElementById('co_quan').value = 'Ủy ban nhân dân Quận 1';
+      document.getElementById('hovaten').value = 'NGUYỄN THỊ HUỲNH NHƯ';
+
+      // 2. Nội dung thay đổi
+      // 2.1 Đổi tên
+      const chkTen = document.getElementById('chk_ten');
+      chkTen.checked = true;
+      toggleSection('sec_ten', true);
+      document.getElementById('ten_hkd_moi').value = 'HỘ KINH DOANH HOA TƯƠI SÀI GÒN';
+
+      // 2.2 Đổi trụ sở
+      const chkTruso = document.getElementById('chk_truso');
+      chkTruso.checked = true;
+      toggleSection('sec_truso', true);
+      document.getElementById('truso_sonha').value = '123/45 Đường Số 7, Khu phố 3';
+      document.getElementById('truso_coquan').value = 'Phường Bến Nghé';
+      document.getElementById('truso_thanhpho').value = 'Thành phố Hồ Chí Minh';
+      const sdtInput = document.getElementById('truso_sdt');
+      sdtInput.value = '0903343425';
+      formatPhoneInput(sdtInput);
+
+      document.getElementById('chk_thongtinthem').checked = false;
+      document.getElementById('thongtinthem').value = '';
+
+      // 2.3 Đổi ngành nghề
+      const chkNganh = document.getElementById('chk_nganhnghe');
+      chkNganh.checked = true;
+      toggleSection('sec_nganhnghe', true);
+      document.querySelector('#table_bosung tbody').innerHTML = '';
+      document.querySelector('#table_bo tbody').innerHTML = '';
+      addNganhRow('table_bosung', '1410', 'May trang phục (trừ trang phục từ da lông thú) (Chi tiết: May mặc thời trang)', true);
+      addNganhRow('table_bosung', '9610', 'Giặt là, làm sạch các sản phẩm dệt và lông thú (Chi tiết: Giặt ủi cao cấp)', false);
+      addNganhRow('table_bo', '4771', 'Bán lẻ hàng may mặc, giày dép, hàng da và giả da trong các cửa hàng chuyên doanh', false);
+
+      // 2.4 Đổi vốn
+      const chkVon = document.getElementById('chk_von');
+      chkVon.checked = true;
+      toggleSection('sec_von', true);
+      document.getElementById('von_moi').value = '200.000.000 VNĐ (Hai trăm triệu đồng)';
+      document.getElementById('von_thoigian').value = '10/11/2026';
+      document.getElementById('von_hinhthuc').value = 'Tăng vốn';
+
+      // 2.5 Cấp đổi
+      const chkCapdoi = document.getElementById('chk_capdoi');
+      chkCapdoi.checked = true;
+      toggleSection('sec_capdoi', true);
+      document.getElementById('capdoi_solaodong').value = '10';
+
+      // 3. Ủy quyền
+      document.getElementById('uq_hovaten').value = 'NGUYỄN THỊ HUỲNH NHƯ';
+      document.getElementById('uq_ngaysinh').value = '15/08/1995';
+      document.getElementById('uq_cccd').value = '079195001234';
+      document.getElementById('uq_ngaycap').value = '10/10/2021';
+      document.getElementById('uq_coquancap').value = 'Cục Trưởng Cục Cảnh Sát Quản Lý Hành Chính Về Trật Tự Xã Hội';
+      document.getElementById('uq_diachi').value = '123/45 Đường Số 7, Phường Bến Nghé, Quận 1, TP. Hồ Chí Minh';
+
+      // 4. File mẫu
+      const gcnImg = createSampleImage('GIẤY CHỨNG NHẬN ĐKHKD', 'Số ĐKKD: 0319888999', 'Chủ hộ: NGUYỄN THỊ HUỲNH NHƯ', 800, 1130, '#f8fafc', '#1e3a8a');
+      const cccdFront = createSampleImage('CĂN CƯỚC CÔNG DÂN', 'MẶT TRƯỚC - 079195001234', 'Họ tên: NGUYỄN THỊ HUỲNH NHƯ', 856, 540, '#f0fdf4', '#047857');
+      const cccdBack = createSampleImage('CĂN CƯỚC CÔNG DÂN', 'MẶT SAU - ĐẶC ĐIỂM NHẬN DẠNG', 'Cục Cảnh sát QLHC về TTXH', 856, 540, '#f0fdf4', '#047857');
+
+      setSampleFile('data_gcn', 'prev_gcn', 'badge_gcn', gcnImg, 'Giay_Chung_Nhan_Mau.png');
+      setSampleFile('data_cccd_truoc', 'prev_cccd_truoc', 'badge_cccd_truoc', cccdFront, 'CCCD_Mat_Truoc_Mau.png');
+      setSampleFile('data_cccd_sau', 'prev_cccd_sau', 'badge_cccd_sau', cccdBBase64, 'CCCD_Mat_Sau_Mau.png');
+    }
+
+    function clearForm() {
+      ['ten_hkd', 'ma_hkd', 'co_quan', 'hovaten', 'ten_hkd_moi', 'truso_sonha', 'truso_coquan', 'truso_sdt', 'thongtinthem', 'von_moi', 'von_thoigian', 'capdoi_solaodong', 'uq_hovaten', 'uq_ngaysinh', 'uq_cccd', 'uq_ngaycap', 'uq_diachi'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = '';
+      });
+      document.getElementById('truso_thanhpho').value = 'Thành phố Hồ Chí Minh';
+      document.getElementById('uq_coquancap').value = 'Cục Trưởng Cục Cảnh Sát Quản Lý Hành Chính Về Trật Tự Xã Hội';
+      ['chk_ten', 'chk_truso', 'chk_thongtinthem', 'chk_nganhnghe', 'chk_von', 'chk_capdoi'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.checked = false;
+      });
+      ['sec_ten', 'sec_truso', 'sec_nganhnghe', 'sec_von', 'sec_capdoi'].forEach(id => {
+        toggleSection(id, false);
+      });
+      document.querySelector('#table_bosung tbody').innerHTML = '';
+      document.querySelector('#table_bo tbody').innerHTML = '';
+      clearSampleFile('file_gcn', 'data_gcn', 'prev_gcn', 'badge_gcn');
+      clearSampleFile('file_cccd_truoc', 'data_cccd_truoc', 'prev_cccd_truoc', 'badge_cccd_truoc');
+      clearSampleFile('file_cccd_sau', 'data_cccd_sau', 'prev_cccd_sau', 'badge_cccd_sau');
+    }
+
+    // Tự động điền dữ liệu mẫu khi tải trang
+    window.addEventListener('DOMContentLoaded', () => {
+      fillSampleData();
+    });
+  </script>
+</body>
+</html>

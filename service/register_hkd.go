@@ -11,7 +11,13 @@ import (
 	"time"
 )
 
-const HKDOutputPath = "C:\\Users\\nam\\Desktop\\GPKD"
+func getOutputPath() string {
+	home, err := os.UserHomeDir()
+	if err == nil {
+		return filepath.Join(home, "Desktop", "GPKD")
+	}
+	return "C:\\Users\\nam\\Desktop\\GPKD"
+}
 
 // ==================== HELPERS ====================
 
@@ -199,7 +205,7 @@ func generatePowerOfAttorney(data model.Hokinhdoanh, path string) error {
 	applyPlaceholders(doc, placeholders)
 
 	folderName := sanitizeFolderName(data.HoVaTen)
-	outputDir := filepath.Join(HKDOutputPath, folderName)
+	outputDir := filepath.Join(getOutputPath(), folderName)
 	if err := os.MkdirAll(outputDir, os.ModePerm); err != nil {
 		return err
 	}
@@ -238,7 +244,7 @@ func fillHKDTemplate(data model.Hokinhdoanh, path string) error {
 	applyPlaceholders(doc, placeholders)
 
 	folderName := sanitizeFolderName(data.HoVaTen)
-	outputDir := filepath.Join(HKDOutputPath, folderName)
+	outputDir := filepath.Join(getOutputPath(), folderName)
 	if err := os.MkdirAll(outputDir, os.ModePerm); err != nil {
 		fmt.Errorf("error creating directory: %w", err)
 	}
